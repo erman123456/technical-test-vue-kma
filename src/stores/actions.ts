@@ -11,15 +11,6 @@ const authHeaders = {
   'Authorization': `Bearer ${localStorage.access_token}`
 }
 export default {
-  createUser({ commit }, user) {
-    commit('ADD_USER', user)
-  },
-  initVideoData({ commit }, data) {
-    commit('INIT_VDIEO_DATA', data)
-  },
-  initMeCommentData({ commit }, data) {
-    commit('INIT_COMMENT_DATA', data)
-  },
   async signUp({ commit }, payload) {
     try {
       const data = await axios.post(
@@ -52,6 +43,18 @@ export default {
       if (data?.data?.access_token) {
         localStorage.access_token = data?.data?.access_token
         localStorage.username = payload.username
+        try {
+          const getUser = await axios.get(
+            baseUrl + payload.username,
+            {
+              headers: authHeaders
+            }
+          )
+          localStorage.name = getUser?.data.name
+        } catch (error) {
+          alert(error)
+          return false
+        }
       }
       return true
     } catch (error) {
@@ -73,5 +76,5 @@ export default {
       alert(error)
       console.log(error)
     }
-  }
+  },
 }
